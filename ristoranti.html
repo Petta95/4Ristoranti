@@ -17,6 +17,7 @@
   --text-hi:#f7ece9; --text-mid:#cbaaa8; --text-lo:#8f6b6a;
 }
 *{box-sizing:border-box;}
+[hidden]{ display:none !important; }
 html,body{ margin:0; min-height:100vh; overflow-x:hidden; max-width:100vw; background:var(--bordeaux-0); color:var(--text-hi); font-family:'Plus Jakarta Sans',system-ui,sans-serif; }
 body{ background: radial-gradient(900px 460px at 10% -10%, #4a1220 0%, transparent 60%), radial-gradient(900px 500px at 100% 0%, #2a0f14 0%, transparent 55%), var(--bordeaux-0); }
 h1,h2,.font-display{ font-family:'Playfair Display',Georgia,serif; }
@@ -90,6 +91,9 @@ textarea.field-input{ resize:vertical; min-height:52px; }
 </header>
 
 <div class="wrap">
+  <div id="not-configured" class="login-error" hidden style="margin-bottom:1rem;">
+    Sincronizzazione non configurata. <a href="index_ristoranti.html" style="color:#fca5a5;text-decoration:underline;">Torna alla pagina principale</a> e apri le Impostazioni (⚙️) per collegare l'app al vostro repository GitHub.
+  </div>
   <form id="restaurant-form" class="restaurant-form">
     <input type="hidden" id="f-id">
 
@@ -156,53 +160,8 @@ textarea.field-input{ resize:vertical; min-height:52px; }
 
 <div id="toast" class="toast"></div>
 
+<script src="js/sync.js"></script>
 <script>
-/* IndexedDB — stessa base dati usata da index_ristoranti.html */
-const IDB_NAME = 'quattroRistorantiDB';
-const IDB_VERSION = 1;
-const IDB_STORE = 'ristoranti';
-
-function idbOpen(){
-  return new Promise((resolve, reject)=>{
-    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
-    req.onupgradeneeded = (e)=>{
-      const db = e.target.result;
-      if(!db.objectStoreNames.contains(IDB_STORE)){
-        db.createObjectStore(IDB_STORE, { keyPath:'id' });
-      }
-    };
-    req.onsuccess = ()=> resolve(req.result);
-    req.onerror = ()=> reject(req.error);
-  });
-}
-async function idbGet(id){
-  const db = await idbOpen();
-  return new Promise((resolve, reject)=>{
-    const tx = db.transaction(IDB_STORE, 'readonly');
-    const req = tx.objectStore(IDB_STORE).get(id);
-    req.onsuccess = ()=> resolve(req.result || null);
-    req.onerror = ()=> reject(req.error);
-  });
-}
-async function idbPut(record){
-  const db = await idbOpen();
-  return new Promise((resolve, reject)=>{
-    const tx = db.transaction(IDB_STORE, 'readwrite');
-    tx.objectStore(IDB_STORE).put(record);
-    tx.oncomplete = ()=> resolve(record);
-    tx.onerror = ()=> reject(tx.error);
-  });
-}
-async function idbDelete(id){
-  const db = await idbOpen();
-  return new Promise((resolve, reject)=>{
-    const tx = db.transaction(IDB_STORE, 'readwrite');
-    tx.objectStore(IDB_STORE).delete(id);
-    tx.oncomplete = ()=> resolve();
-    tx.onerror = ()=> reject(tx.error);
-  });
-}
-
 /* ---------------- Toast ---------------- */
 let toastTimer = null;
 function showToast(msg, isError){
@@ -294,16 +253,16 @@ function updateMediaPreview(){
 }
 
 /* ---------------- Foto: stato locale del form ---------------- */
-let pendingPhotos = [];   // File objects appena selezionati (da comprimere al salvataggio)
-let keptPhotoUrls = [];   // dataURL già presenti (in modifica) che l'utente NON ha rimosso
+let pendingPhotos = [];   // File objects appena selezionati (da comprimere e caricare al salvataggio)
+let keptPhotoPaths = [];  // percorsi già presenti nel repo (in modifica) che l'utente NON ha rimosso
 
 function renderPhotoPreview(){
   const grid = document.getElementById('photo-preview-grid');
   grid.innerHTML = '';
-  keptPhotoUrls.forEach((url, idx)=>{
+  keptPhotoPaths.forEach((path, idx)=>{
     const div = document.createElement('div');
     div.className = 'photo-thumb';
-    div.innerHTML = `<img src="${url}" alt=""><button type="button" class="photo-thumb-remove" data-kind="kept" data-idx="${idx}">✕</button>`;
+    div.innerHTML = `<img src="${photoUrl(path)}" alt=""><button type="button" class="photo-thumb-remove" data-kind="kept" data-idx="${idx}">✕</button>`;
     grid.appendChild(div);
   });
   pendingPhotos.forEach((file, idx)=>{
@@ -324,7 +283,7 @@ document.getElementById('photo-preview-grid').addEventListener('click', (e)=>{
   const btn = e.target.closest('.photo-thumb-remove');
   if(!btn) return;
   const idx = parseInt(btn.dataset.idx, 10);
-  if(btn.dataset.kind === 'kept') keptPhotoUrls.splice(idx,1);
+  if(btn.dataset.kind === 'kept') keptPhotoPaths.splice(idx,1);
   else pendingPhotos.splice(idx,1);
   renderPhotoPreview();
 });
@@ -332,13 +291,23 @@ document.getElementById('photo-preview-grid').addEventListener('click', (e)=>{
 /* ---------------- Carica record esistente se stiamo modificando ---------------- */
 const params = new URLSearchParams(location.search);
 const editingId = params.get('id');
+let loadedRecord = null; // per riusare createdAt in fase di salvataggio, senza un fetch in più
 
 async function initForm(){
   initRatingInputs();
+
+  if(!isSyncConfigured()){
+    document.getElementById('not-configured').hidden = false;
+    document.getElementById('restaurant-form').hidden = true;
+    return;
+  }
   if(!editingId) return;
+
   try{
-    const r = await idbGet(editingId);
+    const list = await syncLoadAll();
+    const r = list.find(x=> x.id === editingId);
     if(!r){ showToast('Ristorante non trovato', true); return; }
+    loadedRecord = r;
     document.getElementById('page-title').textContent = 'Modifica ristorante';
     document.getElementById('f-id').value = r.id;
     document.getElementById('f-nome').value = r.nome || '';
@@ -354,12 +323,12 @@ async function initForm(){
       row.querySelector('.rating-value').textContent = ratingInputs[row.dataset.cat].get().toFixed(1);
     });
     updateMediaPreview();
-    keptPhotoUrls = [...(r.foto || [])];
+    keptPhotoPaths = [...(r.foto || [])];
     renderPhotoPreview();
     document.getElementById('delete-btn').hidden = false;
   }catch(err){
     console.error(err);
-    showToast('Errore nel caricamento del ristorante', true);
+    showToast(err.message || 'Errore nel caricamento del ristorante', true);
   }
 }
 
@@ -379,12 +348,12 @@ document.getElementById('restaurant-form').addEventListener('submit', async (e)=
   submitBtn.textContent = 'Salvataggio...';
 
   try{
-    let newPhotoUrls = [];
+    let newPhotoPaths = [];
     if(pendingPhotos.length){
-      submitBtn.textContent = `Comprimo le foto (0/${pendingPhotos.length})...`;
       for(let i=0; i<pendingPhotos.length; i++){
-        newPhotoUrls.push(await compressImageFile(pendingPhotos[i]));
-        submitBtn.textContent = `Comprimo le foto (${i+1}/${pendingPhotos.length})...`;
+        submitBtn.textContent = `Carico le foto (${i+1}/${pendingPhotos.length})...`;
+        const dataUrl = await compressImageFile(pendingPhotos[i]);
+        newPhotoPaths.push(await syncUploadPhoto(dataUrl));
       }
     }
     submitBtn.textContent = 'Salvataggio...';
@@ -401,24 +370,16 @@ document.getElementById('restaurant-form').addEventListener('submit', async (e)=
       voto_prezzo: ratingInputs.prezzo.get(),
       note: document.getElementById('f-note').value.trim(),
       autore: document.getElementById('f-autore').value.trim(),
-      foto: [...keptPhotoUrls, ...newPhotoUrls],
-      createdAt: editingId ? undefined : now,
+      foto: [...keptPhotoPaths, ...newPhotoPaths],
+      createdAt: (loadedRecord && loadedRecord.createdAt) || now,
       updatedAt: now,
     };
-    if(editingId){
-      const existing = await idbGet(editingId);
-      record.createdAt = (existing && existing.createdAt) || now;
-    }
 
-    await idbPut(record);
+    await syncSaveRecord(record);
     location.href = 'index_ristoranti.html';
   }catch(err){
     console.error(err);
-    if(err && err.name === 'QuotaExceededError'){
-      showFormError('Spazio esaurito nel browser: prova a rimuovere qualche foto o a usarne di meno.');
-    } else {
-      showFormError('Errore durante il salvataggio. Riprova.');
-    }
+    showFormError(err.message || 'Errore durante il salvataggio. Riprova.');
     submitBtn.disabled = false;
     submitBtn.textContent = 'Salva';
   }
@@ -427,12 +388,17 @@ document.getElementById('restaurant-form').addEventListener('submit', async (e)=
 document.getElementById('delete-btn').addEventListener('click', async ()=>{
   if(!editingId) return;
   if(!confirm('Eliminare questo ristorante dalla lista? L\'operazione non è reversibile.')) return;
+  const btn = document.getElementById('delete-btn');
+  btn.disabled = true;
+  btn.textContent = 'Elimino...';
   try{
-    await idbDelete(editingId);
+    await syncDeleteRecord(editingId, loadedRecord ? loadedRecord.nome : '');
     location.href = 'index_ristoranti.html';
   }catch(err){
     console.error(err);
-    showToast('Errore durante l\'eliminazione', true);
+    showToast(err.message || 'Errore durante l\'eliminazione', true);
+    btn.disabled = false;
+    btn.textContent = '🗑️ Elimina ristorante';
   }
 });
 

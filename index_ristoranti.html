@@ -18,6 +18,7 @@
   --text-hi:#f7ece9; --text-mid:#cbaaa8; --text-lo:#8f6b6a;
 }
 *{box-sizing:border-box;}
+[hidden]{ display:none !important; }
 html,body{ margin:0; min-height:100vh; overflow-x:hidden; max-width:100vw; background:var(--bordeaux-0); color:var(--text-hi); font-family:'Plus Jakarta Sans',system-ui,sans-serif; }
 body{ background: radial-gradient(900px 460px at 10% -10%, #4a1220 0%, transparent 60%), radial-gradient(900px 500px at 100% 0%, #2a0f14 0%, transparent 55%), var(--bordeaux-0); }
 h1,h2,h3,.font-display{ font-family:'Playfair Display',Georgia,serif; }
@@ -123,6 +124,19 @@ h1,h2,h3,.font-display{ font-family:'Playfair Display',Georgia,serif; }
 .toast{ position:fixed; left:50%; bottom:24px; transform:translate(-50%,20px); z-index:1000; background:linear-gradient(135deg,var(--panel),var(--bordeaux-1)); border:1px solid var(--line); color:var(--text-hi); padding:.8rem 1.2rem; border-radius:14px; font-size:.85rem; font-weight:600; box-shadow:0 20px 40px -15px rgba(0,0,0,.7); opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s ease; max-width:90vw; text-align:center; }
 .toast.show{ opacity:1; transform:translate(-50%,0); }
 .toast.error{ border-color:rgba(239,68,68,.5); color:#fca5a5; }
+
+.sync-status{ font-size:.7rem; color:var(--text-lo); display:flex; align-items:center; gap:.3rem; cursor:pointer; background:none; border:none; padding:0; }
+.sync-status:hover{ color:var(--gold-soft); }
+.sync-status .dot{ width:7px; height:7px; border-radius:999px; background:#34d399; flex:none; }
+.sync-status.offline .dot{ background:#f59e0b; }
+
+.setup-card{ max-width:480px; margin:3rem auto; background:linear-gradient(180deg,var(--panel),var(--bordeaux-1)); border:1px solid var(--line); border-radius:22px; padding:2rem 1.6rem; text-align:center; }
+.setup-card .empty-emoji{ font-size:2.4rem; margin-bottom:.6rem; }
+
+.login-error{ color:#fca5a5; background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.35); border-radius:10px; padding:.55rem .8rem; font-size:.8rem; margin:.3rem 0 0; }
+.settings-help{ font-size:.78rem; color:var(--text-mid); background:var(--bordeaux-1); border:1px solid var(--line); border-radius:12px; padding:.8rem; margin-bottom:.8rem; line-height:1.6; text-align:left; }
+.settings-help b{ color:var(--text-hi); }
+.link-inline{ color:var(--gold-soft); cursor:pointer; text-decoration:underline; background:none; border:none; padding:0; font-size:inherit; }
 </style>
 </head>
 <body>
@@ -140,17 +154,20 @@ h1,h2,h3,.font-display{ font-family:'Playfair Display',Georgia,serif; }
       <button id="export-btn" class="icon-btn" title="Esporta backup" aria-label="Esporta backup">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </button>
-      <button id="import-btn" class="icon-btn" title="Importa backup" aria-label="Importa backup">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <button id="refresh-btn" class="icon-btn" title="Aggiorna" aria-label="Aggiorna">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
       </button>
-      <input id="import-file" type="file" accept="application/json" hidden>
+      <button id="settings-btn" class="icon-btn" title="Impostazioni sincronizzazione" aria-label="Impostazioni">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </div>
 
-  <div class="stats-row">
+  <div class="stats-row items-center">
     <div class="stat-chip"><span id="stat-count" class="stat-chip-num">0</span> ristoranti</div>
     <div class="stat-chip"><span id="stat-avg" class="stat-chip-num">–</span> media generale</div>
     <div class="stat-chip"><span id="stat-best" class="stat-chip-num">–</span> miglior voto</div>
+    <button id="sync-status" class="sync-status offline"><span class="dot"></span><span id="sync-status-text">Non configurato</span></button>
   </div>
 
   <div class="controls-row">
@@ -166,6 +183,13 @@ h1,h2,h3,.font-display{ font-family:'Playfair Display',Georgia,serif; }
 </header>
 
 <main id="main-content">
+  <div id="setup-card" class="setup-card" hidden>
+    <div class="empty-emoji">☁️</div>
+    <p class="empty-title">Configura la sincronizzazione</p>
+    <p class="empty-sub">Per salvare e condividere i ristoranti con lei/lui serve collegare l'app al vostro repository GitHub (un'unica volta, da qui).</p>
+    <button id="setup-open-settings" class="btn-primary" style="margin-top:1.1rem;">⚙️ Configura ora</button>
+  </div>
+
   <div id="grid" class="grid-wrap"></div>
 
   <div id="empty-state" class="empty-state" hidden>
@@ -174,13 +198,20 @@ h1,h2,h3,.font-display{ font-family:'Playfair Display',Georgia,serif; }
     <p class="empty-sub">Premi il pulsante "+" per aggiungere la vostra prima cena da valutare.</p>
   </div>
 
-  <div id="loading-state" class="loading-state">
+  <div id="loading-state" class="loading-state" hidden>
     <div class="spinner"></div>
-    <p>Carico i ristoranti...</p>
+    <p>Carico i ristoranti da GitHub...</p>
+  </div>
+
+  <div id="load-error-state" class="empty-state" hidden>
+    <div class="empty-emoji">⚠️</div>
+    <p class="empty-title">Impossibile caricare i dati</p>
+    <p id="load-error-text" class="empty-sub"></p>
+    <button id="load-error-retry" class="btn-secondary" style="margin-top:1rem;">🔄 Riprova</button>
   </div>
 </main>
 
-<a href="ristoranti.html" class="fab" title="Aggiungi ristorante" aria-label="Aggiungi ristorante">
+<a href="ristoranti.html" id="fab-add" class="fab" title="Aggiungi ristorante" aria-label="Aggiungi ristorante">
   <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </a>
 
@@ -188,6 +219,37 @@ h1,h2,h3,.font-display{ font-family:'Playfair Display',Georgia,serif; }
   <div class="modal-panel">
     <button class="modal-close" id="detail-close" aria-label="Chiudi">✕</button>
     <div id="detail-content" class="detail-content"></div>
+  </div>
+</div>
+
+<div id="settings-modal" class="modal-overlay">
+  <div class="modal-panel" style="max-width:480px;">
+    <button class="modal-close" id="settings-close" aria-label="Chiudi">✕</button>
+    <h2 class="font-display" style="font-size:1.3rem;font-weight:800;margin:0 0 .4rem;">⚙️ Sincronizzazione</h2>
+    <p style="font-size:.82rem;color:var(--text-mid);margin:0 0 .8rem;">
+      I ristoranti vengono salvati come file nel vostro repository GitHub, così restano sincronizzati tra i vostri dispositivi. Serve un token generato dal vostro account GitHub (nessun nuovo account da creare).
+      <button type="button" class="link-inline" id="settings-help-toggle">Come si crea il token?</button>
+    </p>
+    <div id="settings-help" class="settings-help" hidden>
+      1. Su GitHub: foto profilo (in alto a destra) → <b>Settings</b><br>
+      2. In fondo al menu a sinistra → <b>Developer settings</b><br>
+      3. <b>Personal access tokens → Fine-grained tokens → Generate new token</b><br>
+      4. Repository access → <b>Only select repositories</b> → scegli il repository di quest'app<br>
+      5. Permissions → Repository permissions → <b>Contents: Read and write</b><br>
+      6. Generate token, poi copialo e incollalo qui sotto (si vede una volta sola!)
+    </div>
+    <form id="settings-form" style="display:flex; flex-direction:column; gap:.55rem;">
+      <label class="field-label" for="s-owner">Utente / organizzazione GitHub</label>
+      <input id="s-owner" class="field-input" placeholder="Es. Petta95" required>
+      <label class="field-label" for="s-repo">Nome del repository</label>
+      <input id="s-repo" class="field-input" placeholder="Es. 4Ristoranti" required>
+      <label class="field-label" for="s-branch">Branch</label>
+      <input id="s-branch" class="field-input" placeholder="main" value="main" required>
+      <label class="field-label" for="s-token">Token di accesso personale</label>
+      <input id="s-token" class="field-input" type="password" placeholder="github_pat_..." required>
+      <div id="settings-error" class="login-error" hidden></div>
+      <button type="submit" id="settings-submit" class="btn-primary" style="margin-top:.5rem;">Salva e connetti</button>
+    </form>
   </div>
 </div>
 
@@ -200,70 +262,8 @@ h1,h2,h3,.font-display{ font-family:'Playfair Display',Georgia,serif; }
 
 <div id="toast" class="toast"></div>
 
+<script src="js/sync.js"></script>
 <script>
-/* ============================================================
-   IndexedDB — nessun account, nessun server: tutti i dati (testi
-   E foto) restano salvati nel browser di questo dispositivo,
-   esattamente come il localStorage usato in index.html per i
-   viaggi, ma senza il limite di ~5MB (qui possiamo permetterci
-   anche diverse foto per ristorante).
-   ============================================================ */
-const IDB_NAME = 'quattroRistorantiDB';
-const IDB_VERSION = 1;
-const IDB_STORE = 'ristoranti';
-
-function idbOpen(){
-  return new Promise((resolve, reject)=>{
-    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
-    req.onupgradeneeded = (e)=>{
-      const db = e.target.result;
-      if(!db.objectStoreNames.contains(IDB_STORE)){
-        db.createObjectStore(IDB_STORE, { keyPath:'id' });
-      }
-    };
-    req.onsuccess = ()=> resolve(req.result);
-    req.onerror = ()=> reject(req.error);
-  });
-}
-async function idbGetAll(){
-  const db = await idbOpen();
-  return new Promise((resolve, reject)=>{
-    const tx = db.transaction(IDB_STORE, 'readonly');
-    const req = tx.objectStore(IDB_STORE).getAll();
-    req.onsuccess = ()=> resolve(req.result);
-    req.onerror = ()=> reject(req.error);
-  });
-}
-async function idbPut(record){
-  const db = await idbOpen();
-  return new Promise((resolve, reject)=>{
-    const tx = db.transaction(IDB_STORE, 'readwrite');
-    tx.objectStore(IDB_STORE).put(record);
-    tx.oncomplete = ()=> resolve(record);
-    tx.onerror = ()=> reject(tx.error);
-  });
-}
-async function idbDelete(id){
-  const db = await idbOpen();
-  return new Promise((resolve, reject)=>{
-    const tx = db.transaction(IDB_STORE, 'readwrite');
-    tx.objectStore(IDB_STORE).delete(id);
-    tx.oncomplete = ()=> resolve();
-    tx.onerror = ()=> reject(tx.error);
-  });
-}
-async function idbClearAndBulkPut(records){
-  const db = await idbOpen();
-  return new Promise((resolve, reject)=>{
-    const tx = db.transaction(IDB_STORE, 'readwrite');
-    const store = tx.objectStore(IDB_STORE);
-    store.clear();
-    records.forEach(r=> store.put(r));
-    tx.oncomplete = ()=> resolve();
-    tx.onerror = ()=> reject(tx.error);
-  });
-}
-
 /* ---------------- Helpers ---------------- */
 function escapeHtml(str){
   return (str||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -298,9 +298,15 @@ let currentSearch = '';
 let detailGallery = [];
 let lbIndex = 0;
 
+function handlePhotoError(img){
+  const div = document.createElement('div');
+  div.className = 'r-card-cover';
+  div.textContent = '🍽️';
+  img.replaceWith(div);
+}
 function cardTemplate(r){
   const cover = (r.foto && r.foto[0])
-    ? `<img class="r-card-cover" src="${r.foto[0]}" alt="${escapeHtml(r.nome)}" loading="lazy">`
+    ? `<img class="r-card-cover" src="${photoUrl(r.foto[0])}" alt="${escapeHtml(r.nome)}" loading="lazy" onerror="handlePhotoError(this)">`
     : `<div class="r-card-cover">🍽️</div>`;
   const voto = mediaVoti(r);
   return `
@@ -382,9 +388,9 @@ function detailRatingRow(label, value){
 }
 
 function openDetail(r){
-  detailGallery = r.foto || [];
+  detailGallery = (r.foto || []).map(photoUrl);
   const gallery = detailGallery.length
-    ? `<div class="detail-gallery">${detailGallery.map((u,i)=>`<img src="${u}" data-idx="${i}" alt="foto ${i+1}">`).join('')}</div>`
+    ? `<div class="detail-gallery">${detailGallery.map((u,i)=>`<img src="${u}" data-idx="${i}" alt="foto ${i+1}" onerror="this.style.display='none'">`).join('')}</div>`
     : `<div class="detail-gallery-empty">🍽️</div>`;
 
   const voto = mediaVoti(r);
@@ -432,15 +438,17 @@ function closeDetail(){
 
 async function handleDelete(r){
   if(!confirm(`Eliminare "${r.nome}" dalla lista? L'operazione non è reversibile.`)) return;
+  const btn = document.getElementById('detail-delete-btn');
+  if(btn){ btn.disabled = true; btn.textContent = 'Elimino...'; }
   try{
-    await idbDelete(r.id);
-    restaurants = restaurants.filter(x=> x.id !== r.id);
+    restaurants = await syncDeleteRecord(r.id, r.nome);
     closeDetail();
     renderAll();
     showToast('🗑️ Ristorante eliminato');
   }catch(err){
     console.error(err);
-    showToast('Errore durante l\'eliminazione', true);
+    showToast(err.message || 'Errore durante l\'eliminazione', true);
+    if(btn){ btn.disabled = false; btn.textContent = '🗑️ Elimina'; }
   }
 }
 
@@ -453,7 +461,7 @@ function openLightbox(idx){
 function renderLightbox(){ document.getElementById('lightbox-img').src = detailGallery[lbIndex]; }
 function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
 
-/* ---------------- Export / Import (backup manuale tra dispositivi) ---------------- */
+/* ---------------- Export (backup di sicurezza, sola lettura) ---------------- */
 function exportData(){
   const payload = { app: '4-ristoranti', exportedAt: new Date().toISOString(), ristoranti: restaurants };
   const blob = new Blob([JSON.stringify(payload, null, 1)], { type:'application/json' });
@@ -469,40 +477,104 @@ function exportData(){
   showToast('⬇️ Backup scaricato');
 }
 
-async function importData(file){
-  try{
-    const text = await file.text();
-    const payload = JSON.parse(text);
-    const incoming = Array.isArray(payload) ? payload : payload.ristoranti;
-    if(!Array.isArray(incoming)) throw new Error('File non valido.');
-    const byId = new Map(restaurants.map(r=> [r.id, r]));
-    incoming.forEach(r=>{ if(r && r.id) byId.set(r.id, r); });
-    const merged = Array.from(byId.values());
-    await idbClearAndBulkPut(merged);
-    restaurants = merged;
-    renderAll();
-    showToast(`✅ Importati ${incoming.length} ristoranti (uniti a quelli esistenti)`);
-  }catch(err){
-    console.error(err);
-    showToast('File di backup non valido', true);
+/* ---------------- Impostazioni di sincronizzazione ---------------- */
+function updateSyncStatusChip(){
+  const chip = document.getElementById('sync-status');
+  const text = document.getElementById('sync-status-text');
+  const cfg = getSyncConfig();
+  if(cfg && isSyncConfigured()){
+    chip.classList.remove('offline');
+    text.textContent = `${cfg.owner}/${cfg.repo}`;
+  } else {
+    chip.classList.add('offline');
+    text.textContent = 'Non configurato';
   }
 }
 
-/* ---------------- Dati ---------------- */
-async function loadData(){
-  document.getElementById('loading-state').hidden = false;
-  document.getElementById('grid').hidden = true;
-  document.getElementById('empty-state').hidden = true;
+function openSettings(){
+  const cfg = getSyncConfig();
+  document.getElementById('s-owner').value = cfg ? cfg.owner : '';
+  document.getElementById('s-repo').value = cfg ? cfg.repo : '';
+  document.getElementById('s-branch').value = cfg ? cfg.branch : 'main';
+  document.getElementById('s-token').value = cfg ? cfg.token : '';
+  document.getElementById('settings-error').hidden = true;
+  const modal = document.getElementById('settings-modal');
+  modal.classList.add('open');
+}
+function closeSettings(){ document.getElementById('settings-modal').classList.remove('open'); }
+
+document.getElementById('settings-btn').addEventListener('click', openSettings);
+document.getElementById('setup-open-settings').addEventListener('click', openSettings);
+document.getElementById('sync-status').addEventListener('click', openSettings);
+document.getElementById('settings-close').addEventListener('click', closeSettings);
+document.getElementById('settings-modal').addEventListener('click', (e)=>{ if(e.target.id==='settings-modal') closeSettings(); });
+document.getElementById('settings-help-toggle').addEventListener('click', ()=>{
+  const help = document.getElementById('settings-help');
+  help.hidden = !help.hidden;
+});
+
+document.getElementById('settings-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const errEl = document.getElementById('settings-error');
+  errEl.hidden = true;
+  const submitBtn = document.getElementById('settings-submit');
+  const cfg = {
+    owner: document.getElementById('s-owner').value.trim(),
+    repo: document.getElementById('s-repo').value.trim(),
+    branch: document.getElementById('s-branch').value.trim() || 'main',
+    token: document.getElementById('s-token').value.trim(),
+  };
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Verifico connessione...';
+  setSyncConfig(cfg);
   try{
-    restaurants = await idbGetAll();
+    await syncTestConnection();
+    closeSettings();
+    updateSyncStatusChip();
+    showToast('✅ Connesso a GitHub');
+    loadData();
+  }catch(err){
+    errEl.textContent = err.message || 'Impossibile connettersi. Controlla i dati inseriti.';
+    errEl.hidden = false;
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Salva e connetti';
+  }
+});
+
+/* ---------------- Dati ---------------- */
+function setDataViewState(state, errorMsg){
+  document.getElementById('setup-card').hidden = state !== 'setup';
+  document.getElementById('loading-state').hidden = state !== 'loading';
+  document.getElementById('load-error-state').hidden = state !== 'error';
+  document.getElementById('grid').hidden = state !== 'ready';
+  document.getElementById('empty-state').hidden = true;
+  document.getElementById('fab-add').hidden = state !== 'ready';
+  if(state === 'error') document.getElementById('load-error-text').textContent = errorMsg || '';
+}
+
+async function loadData(){
+  updateSyncStatusChip();
+  if(!isSyncConfigured()){
+    setDataViewState('setup');
+    return;
+  }
+  setDataViewState('loading');
+  try{
+    restaurants = await syncLoadAll();
+    setDataViewState('ready');
     renderAll();
   }catch(err){
     console.error(err);
-    showToast('Errore nel caricamento dei dati', true);
-  }finally{
-    document.getElementById('loading-state').hidden = true;
+    setDataViewState('error', err.message || 'Errore sconosciuto.');
   }
 }
+
+document.getElementById('load-error-retry').addEventListener('click', loadData);
+document.getElementById('refresh-btn').addEventListener('click', ()=>{
+  showToast('🔄 Aggiorno...');
+  loadData();
+});
 
 /* ---------------- Wiring ---------------- */
 document.getElementById('grid').addEventListener('click', (e)=>{
@@ -529,12 +601,6 @@ document.getElementById('search-input').addEventListener('input', (e)=>{ current
 document.getElementById('sort-select').addEventListener('change', (e)=>{ currentSort = e.target.value; renderAll(); });
 
 document.getElementById('export-btn').addEventListener('click', exportData);
-document.getElementById('import-btn').addEventListener('click', ()=> document.getElementById('import-file').click());
-document.getElementById('import-file').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(file) importData(file);
-  e.target.value = '';
-});
 
 /* ---------------- Init ---------------- */
 loadData();
