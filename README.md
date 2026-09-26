@@ -1,165 +1,69 @@
 # 4 Ristoranti 🍽️
 
-La vostra classifica privata dei ristoranti provati insieme, ispirata al programma TV: 4 categorie di voto (Location, Menu, Servizio, Prezzo), foto, note personali, tutto condiviso in tempo reale tra due account.
+La vostra classifica privata dei ristoranti provati insieme, ispirata al programma TV: 4 categorie di voto con mezze stelle (Location, Menu, Servizio, Prezzo), foto, note personali. Nessun account, nessun server: tutto resta salvato nel browser, con lo stesso spirito del progetto "World Travel Bucket List" (che usa `localStorage`; qui usiamo IndexedDB per poter salvare anche le foto — vedi sotto).
 
-**Stack**: HTML + Tailwind (CDN) + JavaScript puro (nessun framework, nessun build step) + [Supabase](https://supabase.com) (database Postgres + Storage foto + autenticazione), ospitata gratis su GitHub Pages.
-
----
-
-## 1. Struttura del progetto
+## File del progetto
 
 ```
 4Ristoranti/
-├── index.html              ← pagina unica (login, dashboard, form, dettaglio)
-├── manifest.json            ← manifest PWA (installabile su telefono/desktop)
-├── service-worker.js        ← cache offline dell'app shell
-├── supabase-setup.sql       ← script SQL da incollare nel dashboard Supabase
-├── css/
-│   └── style.css            ← tema scuro bordeaux/oro, componenti, responsive
-├── js/
-│   ├── supabase-config.js   ← URL + chiave del TUO progetto Supabase (da compilare)
-│   ├── auth.js              ← login/logout
-│   ├── db.js                ← CRUD ristoranti + upload/compressione foto
-│   └── app.js                ← interfaccia: card, form, dettaglio, stelle, filtri
-├── icons/
-│   ├── icon-192.png
-│   ├── icon-512.png
-│   └── apple-touch-icon.png
-└── README.md                 ← questa guida
+├── index.html              ← rimanda automaticamente a index_ristoranti.html
+│                              (serve solo perché GitHub Pages cerca "index.html")
+├── index_ristoranti.html   ← la pagina principale: lista, ricerca, dettaglio
+├── ristoranti.html         ← form per aggiungere o modificare un ristorante
+└── icons/                   ← icona dell'app
 ```
 
-Non serve `npm install`, non serve un bundler: è tutto codice che il browser esegue direttamente.
+Solo HTML + Tailwind (CDN) + JavaScript puro, nessuna build, nessuna dipendenza da installare.
 
----
+## Come funziona (dati salvati con IndexedDB)
 
-## 2. Configurare il database gratuito (Supabase)
+Tutti i dati — testi **e foto** — restano salvati nel database del browser (**IndexedDB**), non su un server. Abbiamo scelto IndexedDB invece del semplice `localStorage` (quello usato per i viaggi) perché le foto pesano molto di più dei testi: `localStorage` ha un tetto di circa 5MB, mentre IndexedDB può arrivare a centinaia di MB, il che vi permette di aggiungere diverse foto per ristorante senza pensieri. Le foto vengono comunque compresse automaticamente nel browser prima di essere salvate.
 
-### 2.1 Crea il progetto
-1. Vai su **[supabase.com](https://supabase.com)** → **Start your project** → accedi con GitHub.
-2. **New project**: scegli un nome (es. `4-ristoranti`), una password per il database (salvala da qualche parte, non serve per l'app ma è utile) e una regione vicina a voi (es. `eu-central-1`).
-3. Attendi 1-2 minuti che il progetto venga creato.
+**Cosa significa "salvato nel browser"**: i dati restano legati a quel dispositivo/browser specifico. Se aggiungi un ristorante dal telefono e poi apri l'app sul computer, quel ristorante non ci sarà — sono due "cassetti" separati. Per questo motivo l'app ha due pulsanti in alto a destra:
 
-### 2.2 Crea le tabelle, la sicurezza e lo storage foto
-1. Nel menu a sinistra apri **SQL Editor** → **New query**.
-2. Apri il file `supabase-setup.sql` di questo progetto, copia **tutto** il contenuto e incollalo nell'editor.
-3. Premi **Run** (in basso a destra). Deve terminare con "Success. No rows returned".
+- **⬇️ Esporta**: scarica un file `.json` con tutti i ristoranti (foto incluse).
+- **⬆️ Importa**: carica un file `.json` esportato in precedenza, unendo i ristoranti a quelli già presenti (senza duplicarli, riconoscendoli per id).
 
-Questo script crea:
-- la tabella `ristoranti` con i 4 voti, la media calcolata automaticamente, note, foto, autore;
-- le regole di sicurezza (**Row Level Security**) che permettono di leggere/scrivere **solo a chi ha fatto login** — nessun accesso anonimo;
-- il bucket di Storage `foto-ristoranti` per le immagini, con lettura pubblica delle foto (per mostrarle nell'app) ma upload/cancellazione riservati a voi due.
+Così potete tenere aggiornati due dispositivi: chi aggiunge un ristorante esporta il backup e lo manda all'altro/a, che lo importa. Non è automatico come un vero database condiviso, ma è zero-configurazione e senza account di nessun tipo.
 
-### 2.3 Crea i vostri 2 account
-1. Nel menu a sinistra vai su **Authentication** → **Users**.
-2. Clicca **Add user** → **Create new user**.
-3. Inserisci la tua email e una password, spunta **Auto Confirm User** (così non serve confermare via email), **Create user**.
-4. Ripeti per l'account della tua ragazza.
+> ⚠️ Svuotare la cache del browser, disinstallarlo o passare alla "navigazione in incognito" cancella i dati di IndexedDB. Fate un'esportazione ogni tanto come backup di sicurezza.
 
-### 2.4 Disabilita le registrazioni pubbliche
-1. Vai su **Authentication** → **Sign In / Providers** (o **Settings** a seconda della versione dell'interfaccia).
-2. Cerca l'opzione **"Allow new users to sign up"** (in "User Signups") e **disattivala**.
+## Come funziona l'app
 
-Così l'app resta riservata a voi due: nessun altro potrà mai crearsi un account, anche conoscendo il link del sito.
+- **`index_ristoranti.html`**: card con foto di copertina, nome, data, voto medio a stelle. Ricerca per nome, ordina per data o voto. Click su una card → dettaglio con galleria foto, i 4 voti singoli, note, pulsanti Modifica/Elimina.
+- **`ristoranti.html`**: stessa pagina serve sia per **aggiungere** (link dal pulsante "+") sia per **modificare** (link "Modifica" dal dettaglio, che passa `?id=...` nell'URL). Le 4 categorie si votano toccando/cliccando sulla barra di stelle (metà stella = tocco sulla metà sinistra); la media si calcola in automatico. Potete selezionare più foto insieme.
 
-### 2.5 Recupera URL e chiave pubblica
-1. Vai su **Project Settings** (icona ingranaggio in basso a sinistra) → **API**.
-2. Copia:
-   - **Project URL** (es. `https://abcdefgh.supabase.co`)
-   - **anon public** key (una stringa lunga che inizia con `eyJ...`)
-3. Apri `js/supabase-config.js` in VS Code e incolla i due valori al posto dei placeholder:
+## Testare in locale su VS Code
 
-```js
-const SUPABASE_URL = 'https://abcdefgh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJ....................';
-```
+Aprendo `index_ristoranti.html` col doppio click (`file://`) l'app funziona quasi del tutto, ma alcuni browser limitano IndexedDB su `file://`. Meglio usare un mini server locale:
 
-> La "anon key" è fatta apposta per stare nel codice pubblico: è protetta dalle regole RLS che avete appena creato, non dal fatto di essere segreta. **Non** usate mai qui la "service_role key" (quella sì è segreta).
-
----
-
-## 3. Testare l'app in locale su VS Code
-
-I file usano `fetch()` verso Supabase, che nei browser moderni può avere limitazioni se apri `index.html` direttamente col doppio click (protocollo `file://`). Meglio usare un mini server locale, in uno di questi due modi:
-
-**Opzione A — estensione "Live Server" (consigliata, zero configurazione)**
-1. In VS Code installa l'estensione **Live Server** (di Ritwick Dey) dal Marketplace.
+**Opzione A — estensione "Live Server" (consigliata)**
+1. In VS Code installa l'estensione **Live Server** (di Ritwick Dey).
 2. Apri la cartella `4Ristoranti` in VS Code.
-3. Tasto destro su `index.html` → **Open with Live Server**.
-4. Si apre il browser su `http://127.0.0.1:5500` con l'app funzionante.
+3. Tasto destro su `index_ristoranti.html` → **Open with Live Server**.
 
-**Opzione B — con Node.js già installato**
+**Opzione B — con Node.js**
 ```bash
 cd 4Ristoranti
 npx serve .
 ```
-poi apri l'indirizzo che ti stampa in console (es. `http://localhost:3000`).
+poi apri l'indirizzo stampato in console.
 
-Al primo avvio vedrai la schermata di login: usa una delle due email/password create al punto 2.3.
-
----
-
-## 4. Pubblicare su GitHub e attivare GitHub Pages
-
-Da dentro la cartella `4Ristoranti`, nel terminale di VS Code:
+## Pubblicare su GitHub Pages
 
 ```bash
-git init
+cd 4Ristoranti
 git add .
-git commit -m "Prima versione di 4 Ristoranti"
+git commit -m "4 Ristoranti: versione locale con IndexedDB"
 ```
 
-Poi crea un nuovo repository vuoto su GitHub (es. `4Ristoranti`), **senza** README/gitignore (li avete già), e collega:
-
+Poi crea un repository vuoto su GitHub e collega:
 ```bash
 git remote add origin https://github.com/<tuo-utente>/4Ristoranti.git
 git branch -M main
 git push -u origin main
 ```
 
-Infine, come per il progetto precedente, attiva **GitHub Pages**:
-1. Sul repository GitHub → **Settings** → **Pages**.
-2. **Source**: `Deploy from a branch` → Branch `main` → cartella `/ (root)` → **Save**.
-3. Dopo 1-2 minuti l'app sarà online su `https://<tuo-utente>.github.io/4Ristoranti/`.
+Infine, come per il progetto dei viaggi: **Settings → Pages → Source: Deploy from a branch → main → / (root) → Save**. Dopo 1-2 minuti l'app sarà su `https://<tuo-utente>.github.io/4Ristoranti/`.
 
-> Attenzione: `js/supabase-config.js` con la vostra `anon key` finirà nel repository pubblico su GitHub (a meno che il repo non sia privato). Come spiegato sopra è normale e sicuro grazie alla Row Level Security — ma se preferite maggiore riservatezza, potete rendere il repository **privato** nelle impostazioni GitHub (GitHub Pages funziona anche su repo privati con un account GitHub Pro, oppure con Pages gratuito su repo pubblico ma dati comunque protetti da RLS+login).
-
----
-
-## 5. Installarla come app sul telefono
-
-- **Android (Chrome)**: apri il link, tocca i tre puntini in alto a destra → **Aggiungi a schermata Home** (o comparirà un banner automatico "Installa app").
-- **iPhone (Safari)**: apri il link, tocca il pulsante Condividi (quadrato con freccia) → **Aggiungi alla schermata Home**.
-- **Desktop (Chrome/Edge)**: apri il link, clicca l'icona di installazione nella barra degli indirizzi (o menu → Installa 4 Ristoranti).
-
-Da quel momento si apre a schermo intero come un'app vera, con la sua icona.
-
----
-
-## 6. Come funziona l'app
-
-- **Login**: solo con uno dei due account creati in Supabase. La sessione resta salvata nel browser (non serve rifare login ogni volta).
-- **Dashboard**: card con foto di copertina, nome, data, voto medio a stelle. Ordina per data o voto, cerca per nome.
-- **"+"** in basso a destra: apre il form per un nuovo ristorante. Le 4 categorie si votano toccando/cliccando sulla barra di stelle (metà stella = tocco sulla metà sinistra). La media si calcola e si aggiorna in automatico mentre votate.
-- **Foto**: potete selezionarne più di una, vengono compresse automaticamente nel browser prima di caricarle (per non sprecare lo spazio gratuito di Supabase).
-- **Card → dettaglio**: galleria foto (tap per ingrandire), voto finale in evidenza, i 4 voti singoli, note, con pulsanti Modifica/Elimina.
-- Qualsiasi modifica fatta da uno dei due account è visibile subito all'altro al successivo aggiornamento della pagina (l'app non è "live" in tempo reale mentre siete entrambi con l'app aperta contemporaneamente, ma basta un refresh per vedere i dati aggiornati).
-
----
-
-## 7. Piano gratuito Supabase: limiti da sapere
-
-Il piano free è più che sufficiente per un uso personale in due:
-- 500 MB di database, 1 GB di Storage foto, 5 GB di banda/mese.
-- Il progetto va in pausa automaticamente dopo **7 giorni di inattività totale**: basta riaprire l'app (o il dashboard Supabase) per riattivarlo in pochi secondi.
-
----
-
-## 8. Problemi comuni
-
-| Problema | Causa probabile | Soluzione |
-|---|---|---|
-| "Email o password non corrette" | Account non creato o non confermato | Rifai il passo 2.3, spuntando "Auto Confirm User" |
-| I ristoranti non si vedono / errore nel caricamento | RLS non configurata o SQL non eseguito | Riesegui `supabase-setup.sql` nello SQL Editor |
-| Le foto non si caricano | Bucket mancante o policy Storage mancanti | Controlla in Storage che esista `foto-ristoranti`; riesegui lo script SQL |
-| Pagina bianca dopo il deploy | `supabase-config.js` con i placeholder non sostituiti | Verifica di aver incollato URL e anon key veri |
-| Non riesco a installarla come PWA | Stai usando `file://` invece di un server/https | Usa Live Server in locale, oppure apri il link GitHub Pages (https) |
+Ricordate: ogni persona che apre quel link dal proprio browser ha il **suo** elenco locale (vedi sopra, sezione Export/Import) — il link pubblico su GitHub Pages non rende i dati condivisi in automatico, li rende solo raggiungibili dall'app stessa.
