@@ -250,6 +250,10 @@ h1,h2,h3,.font-display{ font-family:'Playfair Display',Georgia,serif; }
       <div id="settings-error" class="login-error" hidden></div>
       <button type="submit" id="settings-submit" class="btn-primary" style="margin-top:.5rem;">Salva e connetti</button>
     </form>
+    <div id="settings-share" hidden style="margin-top:.9rem;font-size:.82rem;color:var(--text-mid);">
+      Per collegare un altro telefono, mandagli questo link (una volta sola): aprendolo, l'app è già pronta.
+      <button type="button" class="link-inline" id="settings-copy-link">📋 Copia link di collegamento</button>
+    </div>
   </div>
 </div>
 
@@ -493,11 +497,12 @@ function updateSyncStatusChip(){
 
 function openSettings(){
   const cfg = getSyncConfig();
-  document.getElementById('s-owner').value = cfg ? cfg.owner : '';
-  document.getElementById('s-repo').value = cfg ? cfg.repo : '';
-  document.getElementById('s-branch').value = cfg ? cfg.branch : 'main';
-  document.getElementById('s-token').value = cfg ? cfg.token : '';
+  document.getElementById('s-owner').value = cfg.owner;
+  document.getElementById('s-repo').value = cfg.repo;
+  document.getElementById('s-branch').value = cfg.branch;
+  document.getElementById('s-token').value = cfg.token;
   document.getElementById('settings-error').hidden = true;
+  document.getElementById('settings-share').hidden = !isSyncConfigured();
   const modal = document.getElementById('settings-modal');
   modal.classList.add('open');
 }
@@ -508,6 +513,15 @@ document.getElementById('setup-open-settings').addEventListener('click', openSet
 document.getElementById('sync-status').addEventListener('click', openSettings);
 document.getElementById('settings-close').addEventListener('click', closeSettings);
 document.getElementById('settings-modal').addEventListener('click', (e)=>{ if(e.target.id==='settings-modal') closeSettings(); });
+document.getElementById('settings-copy-link').addEventListener('click', async ()=>{
+  const link = syncLinkFor(getSyncConfig());
+  try{
+    await navigator.clipboard.writeText(link);
+    showToast('📋 Link copiato: mandalo su WhatsApp');
+  }catch(e){
+    prompt('Copia questo link:', link);
+  }
+});
 document.getElementById('settings-help-toggle').addEventListener('click', ()=>{
   const help = document.getElementById('settings-help');
   help.hidden = !help.hidden;

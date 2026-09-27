@@ -17,12 +17,31 @@ const DATA_PATH = 'data/ristoranti.json';
 const PHOTOS_DIR = 'data/photos';
 const GH_API = 'https://api.github.com';
 
+/* Repository predefinito: basta aggiungere il token. */
+const DEFAULT_SYNC_CONFIG = { owner: 'Petta95', repo: '4Ristoranti', branch: 'main', token: '' };
+
 function getSyncConfig(){
   try{
     const raw = localStorage.getItem(SYNC_CONFIG_KEY);
-    return raw ? JSON.parse(raw) : null;
-  }catch(e){ return null; }
+    return Object.assign({}, DEFAULT_SYNC_CONFIG, raw ? JSON.parse(raw) : {});
+  }catch(e){ return Object.assign({}, DEFAULT_SYNC_CONFIG); }
 }
+
+/* "Link magico": aprendo l'app con #token=... il token viene salvato
+   in questo browser e subito rimosso dalla barra degli indirizzi.
+   Il frammento dopo # non viene mai inviato a nessun server. */
+function syncLinkFor(cfg){
+  const base = location.href.split('#')[0].replace(/[^/]*$/, 'index_ristoranti.html');
+  return `${base}#token=${encodeURIComponent(cfg.token)}`;
+}
+(function importTokenFromLink(){
+  const m = location.hash.match(/(?:^#|&)token=([^&]+)/);
+  if(!m) return;
+  try{
+    setSyncConfig(Object.assign(getSyncConfig(), { token: decodeURIComponent(m[1]) }));
+  }catch(e){}
+  history.replaceState(null, '', location.pathname + location.search);
+})();
 function setSyncConfig(cfg){
   localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(cfg));
 }

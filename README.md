@@ -40,13 +40,10 @@ Solo HTML + Tailwind (CDN) + JavaScript puro, nessuna build, nessuna dipendenza 
 7. **Generate token** e copialo subito: si vede una volta sola
 
 ### 2. Collega l'app
-Apri `index_ristoranti.html`, premi **⚙️ Configura ora** (o l'icona ingranaggio in alto) e inserisci:
-- **Utente/organizzazione GitHub** (es. `Petta95`)
-- **Nome del repository** (es. `4Ristoranti`)
-- **Branch** (di solito `main`)
-- **Token** appena creato
+Apri `index_ristoranti.html` e premi **⚙️ Configura ora** (o l'icona ingranaggio in alto). Utente (`Petta95`), repository (`4Ristoranti`) e branch (`main`) sono già precompilati: incolla solo il **token** e premi **Salva e connetti**.
 
-Premi **Salva e connetti**: fatto, ora sei sincronizzato. Ripeti questo secondo passaggio (solo questo, il token si genera una volta a testa) anche sull'altro dispositivo/account.
+### 3. Collega l'altro dispositivo
+Riapri ⚙️ e premi **📋 Copia link di collegamento**, poi manda il link (es. su WhatsApp) all'altro telefono. Aprendolo, il token viene salvato in quel browser e l'app è subito pronta. Il token non va mai scritto nel codice: GitHub lo revocherebbe automaticamente trovandolo in un repository pubblico.
 
 > Il token resta solo nel `localStorage` del browser che lo inserisce — non finisce mai nel codice pubblicato su GitHub. Trattatelo come una password: chiunque lo ottenga può scrivere su quel repository. Se doveste mai sospettare che sia trapelato, revocatelo da GitHub (Developer settings → Personal access tokens) e createne uno nuovo.
 
