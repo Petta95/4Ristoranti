@@ -74,6 +74,11 @@ textarea.field-input{ resize:vertical; min-height:52px; }
 .photo-thumb{ position:relative; aspect-ratio:1; border-radius:10px; overflow:hidden; background:var(--bordeaux-2); }
 .photo-thumb img{ width:100%; height:100%; object-fit:cover; }
 .photo-thumb-remove{ position:absolute; top:3px; right:3px; width:22px; height:22px; border-radius:999px; border:none; background:rgba(10,2,4,.75); color:#fff; font-size:.75rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.photo-thumb-star{ position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:999px; border:none; background:rgba(10,2,4,.75); font-size:.7rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.photo-thumb-cover{ position:absolute; top:3px; left:3px; padding:2px 6px; border-radius:999px; background:var(--gold, #d4af5a); color:#1a0508; font-size:.6rem; font-weight:700; }
+.photo-thumb-moves{ position:absolute; bottom:3px; left:3px; right:3px; display:flex; justify-content:space-between; }
+.photo-thumb-moves button{ width:26px; height:22px; border-radius:8px; border:none; background:rgba(10,2,4,.75); color:#fff; font-size:.95rem; line-height:1; cursor:pointer; }
+.photo-thumb-moves button:disabled{ opacity:.25; cursor:default; }
 
 .toast{ position:fixed; left:50%; bottom:24px; transform:translate(-50%,20px); z-index:1000; background:linear-gradient(135deg,var(--panel),var(--bordeaux-1)); border:1px solid var(--line); color:var(--text-hi); padding:.8rem 1.2rem; border-radius:14px; font-size:.85rem; font-weight:600; box-shadow:0 20px 40px -15px rgba(0,0,0,.7); opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s ease; max-width:90vw; text-align:center; }
 .toast.show{ opacity:1; transform:translate(-50%,0); }
@@ -253,38 +258,51 @@ function updateMediaPreview(){
 }
 
 /* ---------------- Foto: stato locale del form ---------------- */
-let pendingPhotos = [];   // File objects appena selezionati (da comprimere e caricare al salvataggio)
-let keptPhotoPaths = [];  // percorsi già presenti nel repo (in modifica) che l'utente NON ha rimosso
+// Lista ordinata di tutte le foto del form; la prima è la copertina.
+// Ogni voce è { path } (già nel repo) oppure { file, url } (appena selezionata, caricata al salvataggio).
+let photos = [];
 
 function renderPhotoPreview(){
   const grid = document.getElementById('photo-preview-grid');
   grid.innerHTML = '';
-  keptPhotoPaths.forEach((path, idx)=>{
+  photos.forEach((p, idx)=>{
     const div = document.createElement('div');
     div.className = 'photo-thumb';
-    div.innerHTML = `<img src="${photoUrl(path)}" alt=""><button type="button" class="photo-thumb-remove" data-kind="kept" data-idx="${idx}">✕</button>`;
-    grid.appendChild(div);
-  });
-  pendingPhotos.forEach((file, idx)=>{
-    const div = document.createElement('div');
-    div.className = 'photo-thumb';
-    const url = URL.createObjectURL(file);
-    div.innerHTML = `<img src="${url}" alt=""><button type="button" class="photo-thumb-remove" data-kind="pending" data-idx="${idx}">✕</button>`;
+    const src = p.path ? photoUrl(p.path) : p.url;
+    const last = idx === photos.length - 1;
+    div.innerHTML = `<img src="${src}" alt="">`
+      + (idx === 0
+          ? `<span class="photo-thumb-cover">Copertina</span>`
+          : `<button type="button" class="photo-thumb-star" data-action="cover" data-idx="${idx}" title="Usa come copertina">⭐</button>`)
+      + `<button type="button" class="photo-thumb-remove" data-action="remove" data-idx="${idx}">✕</button>`
+      + `<div class="photo-thumb-moves">`
+      +   `<button type="button" data-action="left" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} aria-label="Sposta a sinistra">‹</button>`
+      +   `<button type="button" data-action="right" data-idx="${idx}" ${last ? 'disabled' : ''} aria-label="Sposta a destra">›</button>`
+      + `</div>`;
     grid.appendChild(div);
   });
 }
 document.getElementById('photo-drop').addEventListener('click', ()=> document.getElementById('f-foto').click());
 document.getElementById('f-foto').addEventListener('change', (e)=>{
-  pendingPhotos.push(...Array.from(e.target.files));
+  photos.push(...Array.from(e.target.files).map(file => ({ file, url: URL.createObjectURL(file) })));
   renderPhotoPreview();
   e.target.value = '';
 });
 document.getElementById('photo-preview-grid').addEventListener('click', (e)=>{
-  const btn = e.target.closest('.photo-thumb-remove');
+  const btn = e.target.closest('button[data-action]');
   if(!btn) return;
   const idx = parseInt(btn.dataset.idx, 10);
-  if(btn.dataset.kind === 'kept') keptPhotoPaths.splice(idx,1);
-  else pendingPhotos.splice(idx,1);
+  const action = btn.dataset.action;
+  if(action === 'remove'){
+    const [removed] = photos.splice(idx,1);
+    if(removed.url) URL.revokeObjectURL(removed.url);
+  } else if(action === 'cover'){
+    photos.unshift(...photos.splice(idx,1));
+  } else {
+    const to = action === 'left' ? idx - 1 : idx + 1;
+    if(to < 0 || to >= photos.length) return;
+    [photos[idx], photos[to]] = [photos[to], photos[idx]];
+  }
   renderPhotoPreview();
 });
 
@@ -323,7 +341,7 @@ async function initForm(){
       row.querySelector('.rating-value').textContent = ratingInputs[row.dataset.cat].get().toFixed(1);
     });
     updateMediaPreview();
-    keptPhotoPaths = [...(r.foto || [])];
+    photos = (r.foto || []).map(path => ({ path }));
     renderPhotoPreview();
     document.getElementById('delete-btn').hidden = false;
   }catch(err){
@@ -348,13 +366,17 @@ document.getElementById('restaurant-form').addEventListener('submit', async (e)=
   submitBtn.textContent = 'Salvataggio...';
 
   try{
-    let newPhotoPaths = [];
-    if(pendingPhotos.length){
-      for(let i=0; i<pendingPhotos.length; i++){
-        submitBtn.textContent = `Carico le foto (${i+1}/${pendingPhotos.length})...`;
-        const dataUrl = await compressImageFile(pendingPhotos[i]);
-        newPhotoPaths.push(await syncUploadPhoto(dataUrl));
-      }
+    // Carica le foto nuove mantenendo l'ordine scelto (la prima resta la copertina).
+    const newCount = photos.filter(p => !p.path).length;
+    let uploaded = 0;
+    const photoPaths = [];
+    for(const p of photos){
+      if(p.path){ photoPaths.push(p.path); continue; }
+      uploaded++;
+      submitBtn.textContent = `Carico le foto (${uploaded}/${newCount})...`;
+      const dataUrl = await compressImageFile(p.file);
+      p.path = await syncUploadPhoto(dataUrl); // se il salvataggio fallisce, un nuovo tentativo non la ricarica
+      photoPaths.push(p.path);
     }
     submitBtn.textContent = 'Salvataggio...';
 
@@ -370,7 +392,7 @@ document.getElementById('restaurant-form').addEventListener('submit', async (e)=
       voto_prezzo: ratingInputs.prezzo.get(),
       note: document.getElementById('f-note').value.trim(),
       autore: document.getElementById('f-autore').value.trim(),
-      foto: [...keptPhotoPaths, ...newPhotoPaths],
+      foto: photoPaths,
       createdAt: (loadedRecord && loadedRecord.createdAt) || now,
       updatedAt: now,
     };
