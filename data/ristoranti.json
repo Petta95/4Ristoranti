@@ -4,7 +4,7 @@
   "nome": "Antica Moka",
   "data_visita": "2017-10-15",
   "descrizione": "Anniversario 5 anni",
-  "voto_location": 4,
+  "voto_location": 4.5,
   "voto_menu": 4.5,
   "voto_servizio": 4,
   "voto_prezzo": 3,
@@ -24,7 +24,7 @@
    "data/photos/p_1790504169578_bd7l7x.jpg"
   ],
   "createdAt": "2026-09-27T10:16:10.906Z",
-  "updatedAt": "2026-09-27T10:16:10.906Z"
+  "updatedAt": "2026-09-27T10:39:51.035Z"
  },
  {
   "id": "r_1790504573466_sprm2l",
