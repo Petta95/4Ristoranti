@@ -1,0 +1,29 @@
+[
+ {
+  "id": "r_1790504170908_uaaceh",
+  "nome": "Antica Moka",
+  "data_visita": "2017-10-15",
+  "descrizione": "Anniversario 5 anni",
+  "voto_location": 4,
+  "voto_menu": 4.5,
+  "voto_servizio": 4,
+  "voto_prezzo": 3,
+  "note": "",
+  "autore": "Petta",
+  "foto": [
+   "data/photos/p_1790504154474_hmokbz.jpg",
+   "data/photos/p_1790504156011_xs3xzi.jpg",
+   "data/photos/p_1790504157351_qqe4x8.jpg",
+   "data/photos/p_1790504158876_93w4wd.jpg",
+   "data/photos/p_1790504160322_37p2oa.jpg",
+   "data/photos/p_1790504161757_wgfddu.jpg",
+   "data/photos/p_1790504163509_9hi9s6.jpg",
+   "data/photos/p_1790504165052_fclgqb.jpg",
+   "data/photos/p_1790504166553_twhwrf.jpg",
+   "data/photos/p_1790504168032_tvjl70.jpg",
+   "data/photos/p_1790504169578_bd7l7x.jpg"
+  ],
+  "createdAt": "2026-09-27T10:16:10.906Z",
+  "updatedAt": "2026-09-27T10:16:10.906Z"
+ }
+]
