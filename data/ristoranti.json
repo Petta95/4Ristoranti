@@ -219,5 +219,29 @@
   ],
   "createdAt": "2026-09-29T14:02:32.742Z",
   "updatedAt": "2026-09-29T14:02:32.742Z"
+ },
+ {
+  "id": "r_1790691142526_k2moxm",
+  "nome": "Ok Amigo",
+  "data_visita": "2019-04-17",
+  "descrizione": "Il giorno dopo ti fa male il culo",
+  "voto_location": 2,
+  "voto_menu": 3,
+  "voto_servizio": 2.5,
+  "voto_prezzo": 3,
+  "note": "",
+  "autore": "",
+  "foto": [
+   "data/photos/p_1790691129809_uc6x2w.jpg",
+   "data/photos/p_1790691131272_maqmbu.jpg",
+   "data/photos/p_1790691132807_ra4b3l.jpg",
+   "data/photos/p_1790691134199_gfx79h.jpg",
+   "data/photos/p_1790691135832_312l0w.jpg",
+   "data/photos/p_1790691137418_9laez8.jpg",
+   "data/photos/p_1790691138882_wvmi7g.jpg",
+   "data/photos/p_1790691140857_d8exfw.jpg"
+  ],
+  "createdAt": "2026-09-29T14:12:22.526Z",
+  "updatedAt": "2026-09-29T14:12:22.526Z"
  }
 ]
