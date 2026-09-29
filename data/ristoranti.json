@@ -155,5 +155,23 @@
   ],
   "createdAt": "2026-09-29T08:04:05.035Z",
   "updatedAt": "2026-09-29T08:04:05.035Z"
+ },
+ {
+  "id": "r_1790669094363_43h5ev",
+  "nome": "Cucina Mari",
+  "data_visita": "2016-10-15",
+  "descrizione": "",
+  "voto_location": 5,
+  "voto_menu": 5,
+  "voto_servizio": 5,
+  "voto_prezzo": 5,
+  "note": "",
+  "autore": "",
+  "foto": [
+   "data/photos/p_1790669091537_gddi1y.jpg",
+   "data/photos/p_1790669092909_yszpo4.jpg"
+  ],
+  "createdAt": "2026-09-29T08:04:54.363Z",
+  "updatedAt": "2026-09-29T08:04:54.363Z"
  }
 ]
