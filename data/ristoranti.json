@@ -68,5 +68,29 @@
   ],
   "createdAt": "2026-09-29T07:58:02.202Z",
   "updatedAt": "2026-09-29T07:58:02.202Z"
+ },
+ {
+  "id": "r_1790668773064_kgel88",
+  "nome": "Vinicio",
+  "data_visita": "2018-04-23",
+  "descrizione": "",
+  "voto_location": 3.5,
+  "voto_menu": 4,
+  "voto_servizio": 4,
+  "voto_prezzo": 3,
+  "note": "",
+  "autore": "Petta",
+  "foto": [
+   "data/photos/p_1790668760145_zsjldt.jpg",
+   "data/photos/p_1790668761647_4jnjt0.jpg",
+   "data/photos/p_1790668763271_gzcxmz.jpg",
+   "data/photos/p_1790668764881_ewhmgr.jpg",
+   "data/photos/p_1790668766365_x9ec3k.jpg",
+   "data/photos/p_1790668768446_bgxn0k.jpg",
+   "data/photos/p_1790668769903_936sq8.jpg",
+   "data/photos/p_1790668771538_uewlkk.jpg"
+  ],
+  "createdAt": "2026-09-29T07:59:33.064Z",
+  "updatedAt": "2026-09-29T07:59:33.064Z"
  }
 ]
