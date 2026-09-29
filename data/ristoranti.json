@@ -49,5 +49,24 @@
   ],
   "createdAt": "2026-09-27T10:22:53.465Z",
   "updatedAt": "2026-09-27T16:52:57.310Z"
+ },
+ {
+  "id": "r_1790668682202_qlbe5s",
+  "nome": "Osteria del Pozzo",
+  "data_visita": "2018-04-15",
+  "descrizione": "Primo nostro ristorante",
+  "voto_location": 3,
+  "voto_menu": 4,
+  "voto_servizio": 3.5,
+  "voto_prezzo": 3.5,
+  "note": "Troppi quadri del Modena",
+  "autore": "Petta",
+  "foto": [
+   "data/photos/p_1790668677876_2l5cq8.jpg",
+   "data/photos/p_1790668679294_eaitrw.jpg",
+   "data/photos/p_1790668680911_s3gg5h.jpg"
+  ],
+  "createdAt": "2026-09-29T07:58:02.202Z",
+  "updatedAt": "2026-09-29T07:58:02.202Z"
  }
 ]
