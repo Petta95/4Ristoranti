@@ -200,5 +200,24 @@
   ],
   "createdAt": "2026-09-29T10:04:38.265Z",
   "updatedAt": "2026-09-29T10:04:38.265Z"
+ },
+ {
+  "id": "r_1790690552742_g0x1nw",
+  "nome": "Mucca Argentina",
+  "data_visita": "2019-03-08",
+  "descrizione": "",
+  "voto_location": 3.5,
+  "voto_menu": 4,
+  "voto_servizio": 3,
+  "voto_prezzo": 3,
+  "note": "",
+  "autore": "",
+  "foto": [
+   "data/photos/p_1790690547499_gzrotw.jpg",
+   "data/photos/p_1790690549517_ba7imk.jpg",
+   "data/photos/p_1790690551195_8xgzqt.jpg"
+  ],
+  "createdAt": "2026-09-29T14:02:32.742Z",
+  "updatedAt": "2026-09-29T14:02:32.742Z"
  }
 ]
