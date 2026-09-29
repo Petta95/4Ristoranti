@@ -77,7 +77,7 @@
   "voto_location": 3.5,
   "voto_menu": 4,
   "voto_servizio": 4,
-  "voto_prezzo": 3,
+  "voto_prezzo": 4,
   "note": "",
   "autore": "Petta",
   "foto": [
@@ -91,7 +91,7 @@
    "data/photos/p_1790668771538_uewlkk.jpg"
   ],
   "createdAt": "2026-09-29T07:59:33.064Z",
-  "updatedAt": "2026-09-29T07:59:33.064Z"
+  "updatedAt": "2026-09-29T14:13:19.786Z"
  },
  {
   "id": "r_1790668877207_jwzb67",
