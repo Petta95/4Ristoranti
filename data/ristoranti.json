@@ -92,5 +92,26 @@
   ],
   "createdAt": "2026-09-29T07:59:33.064Z",
   "updatedAt": "2026-09-29T07:59:33.064Z"
+ },
+ {
+  "id": "r_1790668877207_jwzb67",
+  "nome": "La Franceschetta",
+  "data_visita": "2018-02-07",
+  "descrizione": "",
+  "voto_location": 2.5,
+  "voto_menu": 3.5,
+  "voto_servizio": 3.5,
+  "voto_prezzo": 2.5,
+  "note": "",
+  "autore": "Petta",
+  "foto": [
+   "data/photos/p_1790668862930_9x9iot.jpg",
+   "data/photos/p_1790668864483_pss4wk.jpg",
+   "data/photos/p_1790668866285_ow4gin.jpg",
+   "data/photos/p_1790668869241_bhe9ia.jpg",
+   "data/photos/p_1790668870820_kwk42t.jpg"
+  ],
+  "createdAt": "2026-09-29T08:01:17.207Z",
+  "updatedAt": "2026-09-29T08:01:17.207Z"
  }
 ]
