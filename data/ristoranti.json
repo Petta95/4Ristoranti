@@ -113,5 +113,24 @@
   ],
   "createdAt": "2026-09-29T08:01:17.207Z",
   "updatedAt": "2026-09-29T08:01:17.207Z"
+ },
+ {
+  "id": "r_1790668970052_c67rpy",
+  "nome": "Tokyo",
+  "data_visita": "2017-04-24",
+  "descrizione": "Giappo da asporto preferito",
+  "voto_location": 2,
+  "voto_menu": 4.5,
+  "voto_servizio": 4.5,
+  "voto_prezzo": 4,
+  "note": "",
+  "autore": "Petta",
+  "foto": [
+   "data/photos/p_1790668964821_umusi9.jpg",
+   "data/photos/p_1790668966916_p9cfoe.jpg",
+   "data/photos/p_1790668968467_spzm5e.jpg"
+  ],
+  "createdAt": "2026-09-29T08:02:50.052Z",
+  "updatedAt": "2026-09-29T08:02:50.052Z"
  }
 ]
