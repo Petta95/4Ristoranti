@@ -173,5 +173,32 @@
   ],
   "createdAt": "2026-09-29T08:04:54.363Z",
   "updatedAt": "2026-09-29T08:04:54.363Z"
+ },
+ {
+  "id": "r_1790676278265_wlu4kd",
+  "nome": "Ristorante Positano",
+  "data_visita": "2016-10-01",
+  "descrizione": "Quella tempura..",
+  "voto_location": 4.5,
+  "voto_menu": 4,
+  "voto_servizio": 3.5,
+  "voto_prezzo": 3.5,
+  "note": "",
+  "autore": "",
+  "foto": [
+   "data/photos/p_1790676260772_kt4fog.jpg",
+   "data/photos/p_1790676262442_kfhgf8.jpg",
+   "data/photos/p_1790676264091_vpil18.jpg",
+   "data/photos/p_1790676265727_yjfe96.jpg",
+   "data/photos/p_1790676267554_jvlbwc.jpg",
+   "data/photos/p_1790676269278_dh9pcv.jpg",
+   "data/photos/p_1790676270858_obzab7.jpg",
+   "data/photos/p_1790676272349_ccfh7j.jpg",
+   "data/photos/p_1790676273993_jbze0g.jpg",
+   "data/photos/p_1790676275372_57dsmm.jpg",
+   "data/photos/p_1790676276941_5f0oqk.jpg"
+  ],
+  "createdAt": "2026-09-29T10:04:38.265Z",
+  "updatedAt": "2026-09-29T10:04:38.265Z"
  }
 ]
