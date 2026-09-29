@@ -132,5 +132,28 @@
   ],
   "createdAt": "2026-09-29T08:02:50.052Z",
   "updatedAt": "2026-09-29T08:02:50.052Z"
+ },
+ {
+  "id": "r_1790669045035_fl3bve",
+  "nome": "Opera 02",
+  "data_visita": "2017-02-14",
+  "descrizione": "",
+  "voto_location": 4.5,
+  "voto_menu": 4,
+  "voto_servizio": 3.5,
+  "voto_prezzo": 2.5,
+  "note": "",
+  "autore": "",
+  "foto": [
+   "data/photos/p_1790669033602_nhfvyl.jpg",
+   "data/photos/p_1790669035189_cbjezr.jpg",
+   "data/photos/p_1790669036762_jqt4ye.jpg",
+   "data/photos/p_1790669038589_870v30.jpg",
+   "data/photos/p_1790669039817_swhz0f.jpg",
+   "data/photos/p_1790669041506_pjexas.jpg",
+   "data/photos/p_1790669043613_p5p2jw.jpg"
+  ],
+  "createdAt": "2026-09-29T08:04:05.035Z",
+  "updatedAt": "2026-09-29T08:04:05.035Z"
  }
 ]
