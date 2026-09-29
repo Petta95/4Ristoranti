@@ -243,5 +243,29 @@
   ],
   "createdAt": "2026-09-29T14:12:22.526Z",
   "updatedAt": "2026-09-29T14:12:22.526Z"
+ },
+ {
+  "id": "r_1790694115104_tibxp4",
+  "nome": "TasteIT",
+  "data_visita": "2019-04-26",
+  "descrizione": "",
+  "voto_location": 2.5,
+  "voto_menu": 4,
+  "voto_servizio": 2.5,
+  "voto_prezzo": 2,
+  "note": "",
+  "autore": "",
+  "foto": [
+   "data/photos/p_1790694102173_wku88g.jpg",
+   "data/photos/p_1790694103787_y259su.jpg",
+   "data/photos/p_1790694105509_tj0pwn.jpg",
+   "data/photos/p_1790694107043_kfvho2.jpg",
+   "data/photos/p_1790694108631_005n6f.jpg",
+   "data/photos/p_1790694110448_j38pdp.jpg",
+   "data/photos/p_1790694111773_4spheg.jpg",
+   "data/photos/p_1790694113515_ymy7lc.jpg"
+  ],
+  "createdAt": "2026-09-29T15:01:55.104Z",
+  "updatedAt": "2026-09-29T15:01:55.104Z"
  }
 ]
