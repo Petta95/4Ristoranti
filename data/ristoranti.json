@@ -357,5 +357,25 @@
   ],
   "createdAt": "2026-10-02T14:33:03.409Z",
   "updatedAt": "2026-10-02T14:33:03.409Z"
+ },
+ {
+  "id": "r_1790951664029_zyyjrg",
+  "nome": "Hotel Bolzano 5 Stelle",
+  "data_visita": "2021-10-15",
+  "descrizione": "",
+  "voto_location": 4.5,
+  "voto_menu": 4,
+  "voto_servizio": 3,
+  "voto_prezzo": 3.5,
+  "note": "",
+  "autore": "",
+  "foto": [
+   "data/photos/p_1790951657217_k6juc6.jpg",
+   "data/photos/p_1790951658729_50bfws.jpg",
+   "data/photos/p_1790951660365_uoexcb.jpg",
+   "data/photos/p_1790951662100_kqw6q3.jpg"
+  ],
+  "createdAt": "2026-10-02T14:34:24.029Z",
+  "updatedAt": "2026-10-02T14:34:24.029Z"
  }
 ]
