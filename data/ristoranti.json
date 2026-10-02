@@ -279,5 +279,33 @@
   ],
   "createdAt": "2026-09-29T15:01:55.104Z",
   "updatedAt": "2026-09-29T15:01:55.104Z"
+ },
+ {
+  "id": "r_1790935756171_uwy04g",
+  "nome": "Belmond Hotel Ristorante",
+  "data_visita": "2019-08-21",
+  "descrizione": "",
+  "voto_location": 5,
+  "voto_menu": 4,
+  "voto_servizio": 4.5,
+  "voto_prezzo": 2.5,
+  "note": "",
+  "autore": "",
+  "foto": [
+   "data/photos/p_1790935736792_2eqy1f.jpg",
+   "data/photos/p_1790935738305_uylszg.jpg",
+   "data/photos/p_1790935739864_n7gaf6.jpg",
+   "data/photos/p_1790935741583_8qbhht.jpg",
+   "data/photos/p_1790935743244_bkej2f.jpg",
+   "data/photos/p_1790935744708_ykbysg.jpg",
+   "data/photos/p_1790935746165_b9tfsi.jpg",
+   "data/photos/p_1790935747733_zysa6s.jpg",
+   "data/photos/p_1790935749418_gkog5l.jpg",
+   "data/photos/p_1790935751104_o72cox.jpg",
+   "data/photos/p_1790935752771_vhg1ee.jpg",
+   "data/photos/p_1790935754850_ksbbi9.jpg"
+  ],
+  "createdAt": "2026-10-02T10:09:16.171Z",
+  "updatedAt": "2026-10-02T10:09:16.171Z"
  }
 ]
