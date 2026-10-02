@@ -307,5 +307,31 @@
   ],
   "createdAt": "2026-10-02T10:09:16.171Z",
   "updatedAt": "2026-10-02T10:09:16.171Z"
+ },
+ {
+  "id": "r_1790935988591_f3drvm",
+  "nome": "Ristorante castello Formigine",
+  "data_visita": "2019-10-15",
+  "descrizione": "",
+  "voto_location": 3.5,
+  "voto_menu": 4,
+  "voto_servizio": 3.5,
+  "voto_prezzo": 3.5,
+  "note": "",
+  "autore": "",
+  "foto": [
+   "data/photos/p_1790935973239_odv5qc.jpg",
+   "data/photos/p_1790935974752_ekh6af.jpg",
+   "data/photos/p_1790935976110_dr6b3c.jpg",
+   "data/photos/p_1790935977745_f8hmoy.jpg",
+   "data/photos/p_1790935979321_5ey3lx.jpg",
+   "data/photos/p_1790935980818_gdcoue.jpg",
+   "data/photos/p_1790935982309_tnokb9.jpg",
+   "data/photos/p_1790935984026_4ieazu.jpg",
+   "data/photos/p_1790935985669_55z2cp.jpg",
+   "data/photos/p_1790935987201_fv1urx.jpg"
+  ],
+  "createdAt": "2026-10-02T10:13:08.591Z",
+  "updatedAt": "2026-10-02T10:13:08.591Z"
  }
 ]
