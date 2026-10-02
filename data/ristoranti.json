@@ -335,5 +335,27 @@
   ],
   "createdAt": "2026-10-02T10:13:08.591Z",
   "updatedAt": "2026-10-02T10:13:08.591Z"
+ },
+ {
+  "id": "r_1790951583409_z8mfh4",
+  "nome": "La Porta",
+  "data_visita": "2019-02-14",
+  "descrizione": "",
+  "voto_location": 4,
+  "voto_menu": 4,
+  "voto_servizio": 4,
+  "voto_prezzo": 3,
+  "note": "",
+  "autore": "",
+  "foto": [
+   "data/photos/p_1790951573089_xcxf1j.jpg",
+   "data/photos/p_1790951575160_l4v9sk.jpg",
+   "data/photos/p_1790951576858_ckisx0.jpg",
+   "data/photos/p_1790951578437_48siq8.jpg",
+   "data/photos/p_1790951579851_y0nmgp.jpg",
+   "data/photos/p_1790951581927_i0pykn.jpg"
+  ],
+  "createdAt": "2026-10-02T14:33:03.409Z",
+  "updatedAt": "2026-10-02T14:33:03.409Z"
  }
 ]
