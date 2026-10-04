@@ -288,7 +288,7 @@
   "data_visita": "2019-08-21",
   "descrizione": "",
   "voto_location": 5,
-  "voto_menu": 4,
+  "voto_menu": 4.5,
   "voto_servizio": 4.5,
   "voto_prezzo": 2.5,
   "note": "",
@@ -308,7 +308,7 @@
    "data/photos/p_1790935754850_ksbbi9.jpg"
   ],
   "createdAt": "2026-10-02T10:09:16.171Z",
-  "updatedAt": "2026-10-02T10:09:16.171Z"
+  "updatedAt": "2026-10-04T17:58:31.575Z"
  },
  {
   "id": "r_1790935988591_f3drvm",
