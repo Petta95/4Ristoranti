@@ -163,8 +163,8 @@
   "nome": "Cucina Mari",
   "data_visita": "2016-10-15",
   "descrizione": "",
-  "voto_location": 5,
-  "voto_menu": 5,
+  "voto_location": 3,
+  "voto_menu": 4,
   "voto_servizio": 5,
   "voto_prezzo": 5,
   "note": "",
@@ -174,7 +174,7 @@
    "data/photos/p_1790669092909_yszpo4.jpg"
   ],
   "createdAt": "2026-09-29T08:04:54.363Z",
-  "updatedAt": "2026-09-29T08:04:54.363Z"
+  "updatedAt": "2026-10-04T17:59:02.895Z"
  },
  {
   "id": "r_1790676278265_wlu4kd",
